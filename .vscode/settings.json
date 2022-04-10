@@ -1,0 +1,9 @@
+{
+    "python.linting.flake8Enabled": true,
+    "python.linting.mypyEnabled": true,
+    "python.formatting.provider": "black",
+    "python.linting.flake8Args": [
+		// "--ignore-unused-imports"
+	],
+  "terminal.integrated.fontSize": 14
+}
