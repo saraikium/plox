@@ -1,27 +1,41 @@
+from email import message
 import sys
+from .token import Token, TokenType
+from .scanner import Scanner
 
 
 class Lox(object):
-    def run_file(self, file_path: str)->None:
+    had_error = False
+
+    def run_file(self, file_path: str) -> None:
         with open(file_path) as code:
             self.run(code.read())
+        if self.had_error:
+            sys.exit(65)
 
-    def run_prompt(self ) -> None:
+    def run_prompt(self) -> None:
+        while True:
+            print("> ", end="")
+            code_str = input()
+            if code_str is None:
+                break
+            self.run(code_str)
+            self.had_error = False
 
-       while True:
-           print("> ", end="")
-           code_str = input()
-           if code_str is None:
-               break
-           self.run(code_str)
-
-
-
-    def run(self, code_str:str) -> None:
-        scanner = new scanner(source)
+    def run(self, code_str: str) -> None:
+        scanner = Scanner(code_str)
         tokens: list[Token] = scanner.scan_tokens()
-        print(code_str)
 
+        # print the tokens
+        for token in tokens:
+            print(token)
+
+    def error(self, line: int, message: str):
+        self.report(line, "", message)
+
+    @staticmethod
+    def report(line: int, where: str, message: str):
+        print(f"Line {line} Error {where} : {message}")
 
     def main(self) -> None:
         args_len = len(sys.argv)
@@ -31,8 +45,6 @@ class Lox(object):
             self.run_file(sys.argv[1])
         else:
             self.run_prompt()
-
-
 
 
 if __name__ == "__main__":

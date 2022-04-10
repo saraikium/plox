@@ -3,7 +3,7 @@
     "python.linting.mypyEnabled": true,
     "python.formatting.provider": "black",
     "python.linting.flake8Args": [
-		// "--ignore-unused-imports"
+		"--ignore-unused-imports"
 	],
   "terminal.integrated.fontSize": 14
 }
