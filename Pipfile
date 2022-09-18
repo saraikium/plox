@@ -4,7 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flake8 = "*"
 
 [dev-packages]
 flake8 = "*"
@@ -12,4 +11,4 @@ black = "*"
 mypy = "*"
 
 [requires]
-python_version = "3.10"
+python_version = "3.11.0.rc1"

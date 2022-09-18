@@ -75,7 +75,7 @@ class Scanner:
             self.advance()
 
         if self.is_at_end():
-            Lox.error(self.line, "Unterminated string.")
+            # Lox.error(self.line, "Unterminated string.")
             return
 
         # The closing '"'
@@ -161,16 +161,22 @@ class Scanner:
 
             case "!":
                 self.add_token(
-                    TokenType.BANG_EQUAL if self.match_next("=") else TokenType.BANG
+                    TokenType.BANG_EQUAL
+                    if self.match_next("=")
+                    else TokenType.BANG
                 )
             case "=":
                 self.add_token(
-                    TokenType.EQUAL_EQUAL if self.match_next("=") else TokenType.EQUAL
+                    TokenType.EQUAL_EQUAL
+                    if self.match_next("=")
+                    else TokenType.EQUAL
                 )
 
             case "<":
                 self.add_token(
-                    TokenType.LESS_EQUAL if self.match_next("=") else TokenType.LESS
+                    TokenType.LESS_EQUAL
+                    if self.match_next("=")
+                    else TokenType.LESS
                 )
 
             case ">":
@@ -182,7 +188,9 @@ class Scanner:
 
             case "/":
                 if self.match_next("/"):
-                    while self.peek_ahead() != "\n" and self.is_at_end() == False:
+                    while (
+                        self.peek_ahead() != "\n" and self.is_at_end() is False
+                    ):
                         self.advance()
                 else:
                     self.add_token(TokenType.SLASH)
@@ -203,4 +211,4 @@ class Scanner:
                 elif self.is_alpha(c):
                     self.identifier()
                 else:
-                    Lox.error(self.line, "Unexpected character.")
+                    Lox.error(line=self.line, message="Unexpected character.")
