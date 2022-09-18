@@ -1,10 +1,31 @@
-from ..token import Token, TokenType
-from ..main import Lox
+from decimal import Decimal
+from src.token import Token, TokenType
+from src.main import Lox
+
+keywords: dict[str, TokenType] = {
+    "and": TokenType.AND,
+    "class": TokenType.CLASS,
+    "else": TokenType.ELSE,
+    "false": TokenType.FALSE,
+    "for": TokenType.FOR,
+    "fun": TokenType.FUN,
+    "if": TokenType.IF,
+    "nil": TokenType.NIL,
+    "or": TokenType.OR,
+    "print": TokenType.PRINT,
+    "return": TokenType.RETURN,
+    "super": TokenType.SUPER,
+    "this": TokenType.THIS,
+    "true": TokenType.TRUE,
+    "var": TokenType.VAR,
+    "while": TokenType.WHILE,
+}
 
 
 class Scanner:
-    source: str = ""
     tokens: list[Token] = []
+    keywords: dict[str, TokenType] = keywords
+    source: str = ""
     current: int = 0
     start: int = 0
     line: int = 1
@@ -25,14 +46,13 @@ class Scanner:
         return self.tokens
 
     def advance(self) -> str:
-
         char = self.source[self.current]
         self.current += 1
         return char
 
     def add_token(self, type: TokenType, literal: object = None):
-        text: str = self.source[self.start : self.current]
-        self.tokens.append(Token(type, text, literal, self.line))
+        lexeme_text: str = self.source[self.start : self.current]
+        self.tokens.append(Token(type, lexeme_text, literal, self.line))
 
     def match_next(self, expected: str) -> bool:
         if self.is_at_end():
@@ -43,10 +63,68 @@ class Scanner:
         self.current += 1
         return True
 
-    def peek(self) -> str:
+    def peek_ahead(self) -> str:
         if self.is_at_end():
             return "\0"
         return self.source[self.current]
+
+    def string(self) -> None:
+        while self.peek_ahead() != '"' and self.is_at_end() is False:
+            if self.peek_ahead() == "\n":
+                self.line += 1
+            self.advance()
+
+        if self.is_at_end():
+            Lox.error(self.line, "Unterminated string.")
+            return
+
+        # The closing '"'
+        self.advance()
+
+        str_value: str = self.source[self.start + 1 : self.current - 1]
+        self.add_token(TokenType.STRING, str_value)
+
+    def is_digit(self, c: str) -> bool:
+        # This might not work in python. Circle back if this doesn't work.
+        return c.isnumeric()
+
+    # This method peeks two characters ahead
+    def peek_next(self) -> str:
+        if self.current + 1 >= len(self.source):
+            return "\0"
+        return self.source[self.current + 1]
+
+    def is_alpha(self, char: str) -> bool:
+        return char.isalpha()
+
+    def is_alphanumeric(self, char: str):
+        return char.isalnum()
+
+    def number(self) -> None:
+        while self.is_digit(self.peek_ahead()):
+            self.advance()
+
+        # Look for the decimal part
+        if self.peek_ahead() == "." and self.is_digit(self.peek_next()):
+            self.advance()
+
+            while self.is_digit(self.peek_ahead()):
+                self.advance()
+
+        self.add_token(
+            TokenType.NUMBER, Decimal(self.source[self.start : self.current])
+        )
+
+    def identifier(self) -> None:
+        while self.is_alphanumeric(self.peek_ahead()):
+            self.advance()
+
+        text: str = self.source[self.start : self.current]
+        token_type = self.keywords.get(text)
+        if token_type is None:
+            token_type = TokenType.IDENTIFIER
+
+        self.add_token(token_type)
 
     def scan_token(self) -> None:
         c = self.advance()
@@ -104,22 +182,25 @@ class Scanner:
 
             case "/":
                 if self.match_next("/"):
-                    while self.peek() != "\n" and self.is_at_end() == False:
+                    while self.peek_ahead() != "\n" and self.is_at_end() == False:
                         self.advance()
                 else:
                     self.add_token(TokenType.SLASH)
 
-            case " ":
-                pass
-
-            case "\r":
-                pass
-
-            case "\t":
+            # Ignore the whitespace characters
+            case " " | "\r" | "\t":
                 pass
 
             case "\n":
                 self.line += 1
 
+            case '"':
+                self.string()
+
             case _:
-                Lox.error(self.line, "Unexpected character.")
+                if self.is_digit(c):
+                    self.number()
+                elif self.is_alpha(c):
+                    self.identifier()
+                else:
+                    Lox.error(self.line, "Unexpected character.")

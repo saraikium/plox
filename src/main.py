@@ -1,7 +1,6 @@
-from email import message
 import sys
-from .token import Token, TokenType
-from .scanner import Scanner
+from src.token import Token
+from src.scanner import Scanner
 
 
 class Lox(object):
@@ -35,9 +34,11 @@ class Lox(object):
 
     @staticmethod
     def report(line: int, where: str, message: str):
-        print(f"Line {line} Error {where} : {message}")
+        print(f"[Line {line} ] Error {where} : {message}")
+        Lox.had_error = True
 
     def main(self) -> None:
+        print(sys.argv)
         args_len = len(sys.argv)
         if args_len > 2:
             print("Usage: plox [script]")
@@ -47,6 +48,25 @@ class Lox(object):
             self.run_prompt()
 
 
-if __name__ == "__main__":
+def main() -> None:
+    # Instantiate a new Lox Object
     lox = Lox()
-    lox.main()
+
+    args = sys.argv
+    args_len = len(args)
+
+    if args_len > 2:
+        print("Usage: plox script")
+        sys.exit(64)
+
+    elif args_len == 2:
+        lox.run_file(args[1])
+
+    else:
+        lox.run_prompt()
+
+    pass
+
+
+if __name__ == "__main__":
+    main()

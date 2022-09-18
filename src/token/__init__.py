@@ -1,7 +1,7 @@
-import enum
+from enum import Enum
 
 
-class TokenType(enum.Enum):
+class TokenType(Enum):
     # Single character tokens
     LEFT_PAREN = "LEFT_PAREN"
     RIGHT_PAREN = "RIGHT_PAREN"
@@ -62,6 +62,3 @@ class Token(object):
 
     def __str__(self) -> str:
         return f"{self.type} {self.lexeme} {self.literal}"
-
-
-tok = Token(TokenType.AND, "&", None, 0)
