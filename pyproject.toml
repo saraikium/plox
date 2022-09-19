@@ -1,7 +1,2 @@
 [tool.black]
 line-length = 90
-target-version = ["py311"]
-
-[tool.flake8]
-extend-ignore = E203
- 

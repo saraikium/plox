@@ -2,3 +2,4 @@ env/
 venv/
 .mypy_cache
 **/**/__pycache__/*
+src/**/__pycache__

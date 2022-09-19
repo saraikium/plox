@@ -16,7 +16,7 @@ class Lox(object):
         while True:
             print("> ", end="")
             code_str = input()
-            if code_str is None:
+            if len(code_str) == 0:
                 break
             self.run(code_str)
             self.had_error = False
@@ -46,4 +46,3 @@ class Lox(object):
             self.run_file(sys.argv[1])
         else:
             self.run_prompt()
-

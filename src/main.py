@@ -5,7 +5,7 @@ from src import Lox
 def main() -> None:
     # Instantiate a new Lox Object
     lox = Lox()
-
+    # Read command line arguments
     args = sys.argv
     args_len = len(args)
 
@@ -17,7 +17,7 @@ def main() -> None:
     elif args_len == 2:
         lox.run_file(args[1])
 
-    # If no filename is provided run the interactive prompt
+    # If no filename is provided, start the REPL
     else:
         lox.run_prompt()
 
