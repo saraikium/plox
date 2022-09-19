@@ -16,15 +16,15 @@ class Lox(object):
         while True:
             print("> ", end="")
             code_str = input()
-            if len(code_str) == 0:
+            # If user presses CTRL-D returns EOFError
+            if code_str is None:
                 break
             self.run(code_str)
             self.had_error = False
 
-    def run(self, code_str: str) -> None:
-        scanner = Scanner(code_str)
+    def run(self, source_code: str) -> None:
+        scanner = Scanner(source_code)
         tokens: list[Token] = scanner.scan_tokens()
-
         # print the tokens
         for token in tokens:
             print(token)

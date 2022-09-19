@@ -1,1 +1,4 @@
-import something from "internet"
+var language = "plox";
+var creator = "Adnan";
+
+print(language);

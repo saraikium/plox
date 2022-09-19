@@ -17,7 +17,7 @@ def main() -> None:
     elif args_len == 2:
         lox.run_file(args[1])
 
-    # If no filename is provided, start the REPL
+    # If no filename is provided run the interactive prompt
     else:
         lox.run_prompt()
 

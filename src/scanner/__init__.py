@@ -23,11 +23,11 @@ keywords: dict[str, TokenType] = {
 
 
 class Scanner:
-    tokens: list[Token] = []
-    keywords: dict[str, TokenType] = keywords
-    source: str = ""
-    current: int = 0
-    start: int = 0
+    source: str = ""  # The source code
+    tokens: list[Token] = []  # List of tokens generated from the source code
+    keywords: dict[str, TokenType] = keywords  # Reserved keywords
+    start: int = 0  # Starting index of lexeme
+    current: int = 0  # Index of current character being scanned
     line: int = 1
 
     def __init__(self, source: str) -> None:
@@ -38,14 +38,19 @@ class Scanner:
         return self.current >= len(self.source)
 
     def scan_tokens(self) -> list[Token]:
-        while self.is_at_end() is False:
+        while not self.is_at_end():
             self.start = self.current
             self.scan_token()
 
-        self.tokens.append(Token(TokenType.EOF, "", None, self.line))
+        self.tokens.append(
+            Token(type=TokenType.EOF, lexeme="", literal=None, line=self.line)
+        )
         return self.tokens
 
     def advance(self) -> str:
+        """
+        Get the next character in the sequence. Increment the current index.
+        """
         char = self.source[self.current]
         self.current += 1
         return char
@@ -148,7 +153,7 @@ class Scanner:
                 self.add_token(TokenType.DOT)
 
             case "-":
-                self.add_token(TokenType.MINU)
+                self.add_token(TokenType.MINUS)
 
             case "+":
                 self.add_token(TokenType.PLUS)
@@ -211,4 +216,5 @@ class Scanner:
                 elif self.is_alpha(c):
                     self.identifier()
                 else:
-                    Lox.error(line=self.line, message="Unexpected character.")
+                    raise SyntaxError(f"{self.line}: Unexpected character")
+                    # Lox.Synr(line=self.line, message="Unexpected character.")
